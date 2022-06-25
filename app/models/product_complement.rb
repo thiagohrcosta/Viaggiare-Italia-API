@@ -1,0 +1,2 @@
+class ProductComplement < ApplicationRecord
+end
