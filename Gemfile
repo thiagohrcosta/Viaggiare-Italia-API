@@ -32,6 +32,7 @@ gem 'devise'
 gem 'nokogiri'
 gem 'cloudinary'
 gem 'pundit'
+gem 'rack-cors'
 
 gem 'autoprefixer-rails', '10.2.5'
 gem 'font-awesome-sass', '~> 5.6.1'

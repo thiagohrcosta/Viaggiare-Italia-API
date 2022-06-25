@@ -21,53 +21,47 @@ end
 puts "Categories created with success!"
 puts "==============================="
 
+
+
+banner_image_array = []
+
+banner_image = Nokogiri::HTML(URI.open("https://unsplash.com/collections/3x2_s_xw0f0/destinationbanner"))
+banner_image.css("figure a img").each do |banner|
+  image_banner = banner.values[3].split
+  next if image_banner[26].nil?
+
+  banner_image_array << image_banner[26]
+end
+
+photo_image_array = []
+
+photo_image =  Nokogiri::HTML(URI.open("https://unsplash.com/collections/yBTX506UD_8/destinationcard"))
+photo_image.css("figure a img").each do |photo|
+  image_photo = photo.values[3].split
+  next if image_photo[14].nil?
+
+  photo_image_array << image_photo[14]
+end
+
 puts "Creating Destinations..."
 ## Adds destinations to the database
 
 doc_destinations = Nokogiri::HTML(URI.open("https://www.britannica.com/topic/list-of-cities-and-towns-in-Italy-2047404"))
-
+puts "Url successfully opened!"
 doc_destinations.css("section").each do |destination|
+  puts "Url scrapped"
   region = destination.css("h2").text
   destination.css("ul li a").each do |place|
     city = place.children.text
 
-    add_banner_image = ""
-
-    banner_image = Nokogiri::HTML(URI.open("https://unsplash.com/collections/3x2_s_xw0f0/destinationbanner"))
-    banner_image.css("figure a img").each do |banner|
-      image_banner = banner.values[3].split
-      next if image_banner[26].nil?
-
-      add_banner_image = image_banner[26]
-    end
-
-    add_photo_image = ""
-
-    photo_image =  Nokogiri::HTML(URI.open("https://unsplash.com/collections/yBTX506UD_8/destinationcard"))
-    photo_image.css("figure a img").each do |photo|
-      image_photo = photo.values[3].split
-      next if image_photo[14].nil?
-
-      add_photo_image = image_photo[14]
-    end
-
     Destination.create(
       name: city,
-      region: region
+      region: region,
+      banner: banner_image_array.sample,
+      photo: photo_image_array.sample
     )
-    banner_path = File.basename(URI.parse(add_banner_image).path)
-    file = URI.open(add_banner_image.to_s)
-
-    Destination.last.banner.attach(io: file, filename: banner_path, content_type: "image/jpeg")
-
-    photo_path = File.basename(URI.parse(add_photo_image).path)
-    file = URI.open(add_photo_image.to_s)
-    Destination.last.photo.attach(io: file, filename: photo_path, content_type: "image/jpeg")
-
-    puts "Destination #{city} created with success!"
-    sleep 5
-    break if Destination.count > 59
   end
+  puts "Destination created with success!"
 end
 
 puts "Destinations created with success!"
