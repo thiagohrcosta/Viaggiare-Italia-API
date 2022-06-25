@@ -1,7 +1,89 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+require 'nokogiri'
+require 'open-uri'
+
+Category.destroy_all
+Destination.destroy_all
+Place.destroy_all
+BannerPlace.destroy_all
+
+array_of_categories = [
+  "Ristoranti",
+  "Alberghi",
+  "Spiagge",
+  "Vita noturna"
+]
+
+array_of_categories.each do |category|
+  Category.create(name: category)
+end
+
+puts "Categories created with success!"
+
+array_of_destionations = [
+  "Roma",
+  "Milano",
+  "Firenze",
+  "Napoli",
+  "Palermo",
+  "Bologna",
+  "Torino",
+  "Genova",
+  "Bari",
+  "Messina",
+  "Catania",
+  "Taranto",
+  "Pescara",
+  "Lecce",
+  "Cagliari",
+  "Aosta",
+  "Venezia",
+  "Trieste",
+  "Padova",
+  "Bergamo",
+  "Piacenza",
+  "Positano"
+]
+
+array_of_destionations.each do |destination|
+  Destination.create(name: destination)
+end
+
+
+doc_banner = Nokogiri::HTML(URI.open("https://unsplash.com/collections/K4_v8gc61jw/italianbanner"))
+doc_banner.css('figure a img').each do |img|
+  search_array = img.values[3].split
+  next if search_array[26].nil?
+
+  url = search_array[26]
+  BannerPlace.create(
+    photo_url: url
+  )
+
+  break if BannerPlace.count > 56
+end
+
+doc_photo = Nokogiri::HTML(URI.open("https://unsplash.com/collections/9FKBTb41_jU/italian"))
+doc_photo.css('figure a img').each do |img|
+  search_array = img.values[3].split
+  next if search_array[14].nil?
+
+  url = search_array[14]
+  PhotoPlace.create(
+    photo_url: url
+  )
+
+  break if PhotoPlace.count > 56
+end
+
+
+doc_places = Nokogiri::HTML(URI.open('https://www.forketers.com/120-italian-restaurant-names-will-amaze-even-italians/'))
+
+doc_places.css('ol li').each do |places|
+  Place.create(
+    name:  places.children[0].text.capitalize,
+    stars: rand(1..5),
+    destination_id: rand(1..Destination.count)
+  )
+end
+
+

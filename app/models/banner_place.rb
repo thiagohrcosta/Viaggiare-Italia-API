@@ -1,0 +1,2 @@
+class BannerPlace < ApplicationRecord
+end
