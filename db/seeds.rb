@@ -19,30 +19,16 @@ end
 
 puts "Categories created with success!"
 
-array_of_destionations = [
-  "Roma",
-  "Milano",
-  "Firenze",
-  "Napoli",
-  "Palermo",
-  "Bologna",
-  "Torino",
-  "Genova",
-  "Bari",
-  "Messina",
-  "Catania",
-  "Taranto",
-  "Pescara",
-  "Lecce",
-  "Cagliari",
-  "Aosta",
-  "Venezia",
-  "Trieste",
-  "Padova",
-  "Bergamo",
-  "Piacenza",
-  "Positano"
-]
+doc_destinations = Nokogiri::HTML(URI.open("https://www.britannica.com/topic/list-of-cities-and-towns-in-Italy-2047404"))
+
+doc_destinations.css("section").each do |destination|
+  region = destination.css("h2").text
+  destination.css("ul li a").each do |place|
+    city = place.children.text
+
+    Destination.create(name: city, region: region)
+  end
+end
 
 array_of_destionations.each do |destination|
   Destination.create(name: destination)
@@ -74,7 +60,6 @@ doc_photo.css('figure a img').each do |img|
 
   break if PhotoPlace.count > 56
 end
-
 
 doc_places = Nokogiri::HTML(URI.open('https://www.forketers.com/120-italian-restaurant-names-will-amaze-even-italians/'))
 
