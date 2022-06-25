@@ -1,0 +1,2 @@
+class PhotoPlace < ApplicationRecord
+end
