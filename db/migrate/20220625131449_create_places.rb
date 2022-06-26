@@ -4,6 +4,8 @@ class CreatePlaces < ActiveRecord::Migration[6.1]
       t.references :destination, null: false, foreign_key: true
       t.string :name
       t.decimal :stars
+      t.string :banner
+      t.string :photo
 
       t.timestamps
     end

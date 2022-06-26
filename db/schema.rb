@@ -84,6 +84,8 @@ ActiveRecord::Schema.define(version: 2022_06_25_173326) do
     t.bigint "destination_id", null: false
     t.string "name"
     t.decimal "stars"
+    t.string "banner"
+    t.string "photo"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["destination_id"], name: "index_places_on_destination_id"
