@@ -6,6 +6,8 @@ Category.destroy_all
 Destination.destroy_all
 Place.destroy_all
 BannerPlace.destroy_all
+PhotoPlace.destroy_all
+Place.destroy_all
 
 array_of_categories = [
   "Ristoranti",
@@ -64,42 +66,47 @@ doc_destinations.css("section").each do |destination|
   puts "Destination created with success!"
 end
 
-puts "Destinations created with success!"
+puts "Destinations created with success! #{Destination.count}"
 
-# doc_banner = Nokogiri::HTML(URI.open("https://unsplash.com/collections/K4_v8gc61jw/italianbanner"))
-# doc_banner.css('figure a img').each do |img|
-#   search_array = img.values[3].split
-#   next if search_array[26].nil?
 
-#   url = search_array[26]
-#   BannerPlace.create(
-#     photo_url: url
-#   )
+puts "Adding Banner Places..."
 
-#   break if BannerPlace.count > 56
-# end
+doc_banner = Nokogiri::HTML(URI.open("https://unsplash.com/collections/K4_v8gc61jw/italianbanner"))
+doc_banner.css('figure a img').each do |img|
+  search_array = img.values[3].split
+  next if search_array[26].nil?
 
-# doc_photo = Nokogiri::HTML(URI.open("https://unsplash.com/collections/9FKBTb41_jU/italian"))
-# doc_photo.css('figure a img').each do |img|
-#   search_array = img.values[3].split
-#   next if search_array[14].nil?
+  url = search_array[26]
+  BannerPlace.create(
+    photo_url: url
+  )
 
-#   url = search_array[14]
-#   PhotoPlace.create(
-#     photo_url: url
-#   )
+  break if BannerPlace.count > 56
+end
 
-#   break if PhotoPlace.count > 56
-# end
+puts "Adding Photo Places..."
+doc_photo = Nokogiri::HTML(URI.open("https://unsplash.com/collections/9FKBTb41_jU/italian"))
+doc_photo.css('figure a img').each do |img|
+  search_array = img.values[3].split
+  next if search_array[14].nil?
 
-# doc_places = Nokogiri::HTML(URI.open('https://www.forketers.com/120-italian-restaurant-names-will-amaze-even-italians/'))
+  url = search_array[14]
+  PhotoPlace.create(
+    photo_url: url
+  )
 
-# doc_places.css('ol li').each do |places|
-#   Place.create(
-#     name:  places.children[0].text.capitalize,
-#     stars: rand(1..5),
-#     destination_id: rand(1..Destination.count)
-#   )
-# end
+  break if PhotoPlace.count > 56
+end
+
+puts "Creating places..."
+doc_places = Nokogiri::HTML(URI.open('https://www.forketers.com/120-italian-restaurant-names-will-amaze-even-italians/'))
+
+doc_places.css('ol li').each do |places|
+  Place.create(
+    name:  places.children[0].text.capitalize,
+    stars: rand(1..5),
+    destination_id: rand(1..10)
+  )
+end
 
 
